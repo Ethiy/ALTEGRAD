@@ -1,0 +1,159 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University Assignment Title Page 
+% LaTeX Template
+% Version 1.0 (27/12/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% WikiBooks (http://en.wikibooks.org/wiki/LaTeX/Title Creation)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+% Instructions for using this template:
+% This title page is capable of being compiled as is. This is not useful for 
+% including it in another document. To do this, you have two options: 
+%
+% 1) Copy/paste everything between \begin{document} and \end{document} 
+% starting at \begin{titlepage} and paste this into another LaTeX file where you 
+% want your title page.
+% OR
+% 2) Remove everything outside the \begin{titlepage} and \end{titlepage} and 
+% move this file to the same directory as the LaTeX file you wish to add it to. 
+% Then add \input{./title page_1.tex} to your LaTeX file where you want your
+% title page.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc} 
+\usepackage[top=1cm,bottom=1cm,left=0.5cm,right=1.5cm,asymmetric]{geometry}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{1pt}
+\fancyhead[R]{\textit{Master MVA : }}
+\fancyfoot[L]{\textit{}}
+%\usepackage{unicode-math}
+%\setmathfont{XITS Math}
+%\setmathfont[version=setB,StylisticSet=1]{XITS Math}
+\usepackage{array,multirow,makecell}
+\setcellgapes{1pt}
+\makegapedcells
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash }b{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash }b{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash }b{#1}}
+
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{1pt}
+\fancyfoot[L]{\textit{}}
+\newcommand{\cond}{(x_i|x_{\pi_i})}
+
+%\usepackage{caption}
+%\usepackage{subcaption}
+
+
+%\usepackage{unicode-math}
+%\setmathfont{XITS Math}
+%\setmathfont[version=setB,StylisticSet=1]{XITS Math}
+
+
+%\geometry{hmargin=1.5cm,vmargin=2cm}   
+
+\geometry{hmargin=2.5cm,vmargin=2cm}   
+\begin{document}
+
+\begin{center}
+
+\section*{Altegrad 2015 : Final project}
+\section*{Text Categorization}
+\subsection*{Sammy Khalife, Oussama Ennafii, Shuyu Dong}
+\subsubsection*{09/04/2015}
+
+\end{center}
+
+\section*{1 Graphs}
+\subsection*{Graph of words approach}
+
+We subdivided the task into three stages. First, we load the data and construct the document-term matrix, we reduce its dimensions and then we apply the learning method on it.~\\
+~\\
+To get a document term matrix, we use the TW-IDF measure presented in [1]. So we made a function $'extractGraph.py'$ that extracts a graph from a document using the $networkx$ library. This function can constructs a graph that can be weighted or not and directed or not. We can also tune in the window size through the argument $window$. That is when we introduce the function $'documentWordMatrix'$ that constructs obviously a document word matrix. In this matrix, we use the previous function to get the weights of each word depending on the graph and using the same approach as in [1]. Finally, we use the TW-IDF measure to calculate the document term matrix.\\
+
+For the dimensionality reduction, we had two choices. Either, we use the Chi-square method or the Latent Semantic Indexing(LSI) in order to get a tractable matrix. Indeed, there are $14575$ words in the train corpus. Both methods are already implemented on the $'sci-kit learn'$ library. \\
+
+In the third step, we choose two ways to learn. We compared the SVM and the AdaBoost algorithms. We used cross-validation on the train data to choose between the different parameters. SVM performed naturally better than Adaboost , as did the LSI. We reduced the dimension to $100$ since it yielded the best results.\\
+
+There were two ways to test: either we construct a document term matrix for the train set and the test set separately, or we could of constructed the matrix for the whole corpus and then divide it into a train matrix and a test one. The last approach is done so as to make sure that words that are not common for the test and train data sets are all taken into account.\\
+
+We state here the results for a directed unweighted graph with a window of size $4$. We reduce the dimension to $100$ and we apply SVM: for the approach where we get the matrices :\\
+\begin{itemize}
+	 \item separatly: \begin{itemize}
+	 	\item Microaveraging \begin{itemize}
+	 		\item precision: $0.640475102787$ 
+	 		\item recall: $0.640475102787$
+	 	\end{itemize}
+	 	\item Macroaveraging \begin{itemize}
+	 		\item precision: $0.170622860994$
+	 		\item recall: $0.203406087815$
+	 	\end{itemize}
+	 \end{itemize}
+	 
+	 \item jointly: \begin{itemize}
+	 	\item Microaveraging \begin{itemize}
+	 		\item precision: $0.667428049338$ 
+	 		\item recall: $0.667428049338$
+	 	\end{itemize}
+	 	\item Macroaveraging \begin{itemize}
+	 		\item precision: $0.631236989331$
+	 		\item recall: $0.229378369$
+	 	\end{itemize}
+	 \end{itemize}
+\end{itemize}
+
+We did not have time to test other centrality measures for the graph construction. We could of used the eigenvector centrality which captures global properties of the document. It would of course take more time to compute since the $'networkx.eig_centrality'$ matrix powers to get the eigenvalues but it would be interesting to compare it to our results with a method that captures local properties of the document.
+\section*{2 Bag of words approach:}
+
+We kept nearly the same configuration as in the first part: we kept Latent semantic indexing, which performs SVD to the Document-term matrix. 
+The main question here was to find the number of dimensions to keep. In Reuters-21578 R8 dataset, there are $5485$ samples on the train set and $2189$ on the test set. Building the document term matrix and applying TF-IDF method yield features of size $14575$ (total number of word). 
+We kept SVM for classification following [2]. The SVD has been performed in two steps : one time on the train set and a second one on the test set.
+\subsection*{Results}
+With cross-validation (10 values for C and $\gamma$ with a radius basis function kernel), keeping a dimension of 100 after dimensionality reduction yields :~\\
+~\\
+Micro-averaging precision : 0.781635449977~\\
+Macro-averaging precision : 0.198438628628~\\
+Micro-averaging recall : 0.781635449977~\\
+Macro-averaging recall : 0.242023076066~\\
+
+\section*{Conclusion:}
+
+In conclusion, the bag of words representation did better in general comparing with the graph of words representation except for the macro-averaging precision. We do not know how to interpret this last remark. Otherwise, we should investigate in the future, the effect of a global property graph like PageRank for instance.
+
+\begin{thebibliography}{9}
+	\bibitem{latexcompanion} 
+	Rousseau, Fran{\c{c}}ois and Vazirgiannis, Michalis~\\
+	\textit{Graph-of-word and TW-IDF: new approach to ad hoc IR,}. 
+	 Proceedings of the 22nd ACM international conference on Conference on information \& knowledge management, pages 59-68,
+	2013, ACM
+	
+	\bibitem{latexcompanion}
+	Thorsten Joachims~\\
+	\textit{Text categorization with support vector machines: Learning with many relevant features}
+	In Proceedings of the 10th European Conference on Machine Learning, ECML ’98, pages 137–142, London, UK, 1998. Springer-Verlag.
+	
+
+\end{thebibliography}
+\end{document}
